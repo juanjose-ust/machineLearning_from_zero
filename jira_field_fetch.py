@@ -1,6 +1,7 @@
 import requests
 import sys
 import subprocess
+import time
 
 headers={'content-type': 'application/json', 'Authorization': 'Basic cmFodWw4Ni4wOEBnbWFpbC5jb206TnNMdXpTVXZtNlk1QnlCTWlnZjk4QjZE'}
 arg1=sys.argv[1]
@@ -11,7 +12,9 @@ dd={}
 ddd={}
 
 
-
+def create_temp_tag_file():
+    filename="tag_file_" + time.strftime("%Y%m%d-%H%M%S")
+    return filename
 
 
 def git_log():
@@ -34,10 +37,39 @@ def list_issue(issueKey):
     res_is=requests.get(url_issue, headers=headers)
     ddd={}
     ddd=res_is.json()
-    for m in ddd:
-        if m == 'values':
-            for k in ddd[m]:
-                print(k)
+    for m in ddd['fields']:
+        if m == 'project':
+            tag_key='Project'
+            tag_value=ddd['fields'][m]['name']
+            write_tag_to_file(tag_key,tag_value)
+    
+    for m in ddd['fields']:
+        if m == 'priority':
+            tag_key='Priority'
+            tag_value=ddd['fields'][m]['id']
+            write_tag_to_file(tag_key,tag_value)
+    
+    #for m in ddd['fields']:
+    #    if m == 'labels':
+    #        tag_key='Labels'
+    #        tag_value=ddd['fields'][m]
+    #        write_tag_to_file(tag_key,tag_value)
+    
+    for m in ddd['fields']:
+        if m == 'creator':
+            tag_key='Creator'
+            tag_value=ddd['fields'][m]['emailAddress']
+            write_tag_to_file(tag_key,tag_value)
+        
+    tag_key="IssueKey"
+    tag_value=issueKey
+    write_tag_to_file(tag_key,tag_value)
+
+
+def write_tag_to_file(tkey,tvalue):
+    file=open(create_temp_tag_file(), 'a')
+    file.write(tkey + "=" + tvalue + "\n")
+    file.close()
 
 def list_issue2(pID):
     url_issue="https://ust-test.atlassian.net/rest/servicedeskapi/servicedesk/" + pID + "/queue/" + qID + "issue"
