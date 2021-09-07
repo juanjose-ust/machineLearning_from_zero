@@ -12,14 +12,33 @@ ddd={}
 
 
 
-def get_jira_issue_key():
+
+
+def git_log():
     process = subprocess.Popen(['git', 'log', '-1'],
                      stdout=subprocess.PIPE,
                      stderr=subprocess.PIPE)
     stdout, stderr = process.communicate()
-    
+    get_issue_key(stdout)
 
 
+def get_issue_key(stdout):
+    l=[]
+    l=stdout.split('  ')
+    iss_k=l[-1].split(':')[0]
+    print(iss_k)
+    list_issue(iss_k)
+
+
+def list_issue(issueKey):
+    url_issue="https://ust-test.atlassian.net/rest/api/2/issue/" + issueKey 
+    res_is=requests.get(url_issue, headers=headers)
+    ddd={}
+    ddd=res_is.json()
+    for m in ddd:
+        if m == 'values':
+            for k in dd[m]:
+                print(k)
 
 def list_issue(pID):
     url_issue="https://ust-test.atlassian.net/rest/servicedeskapi/servicedesk/" + pID + "/queue/" + qID + "issue"
@@ -45,7 +64,7 @@ def list_queue_components(pID):
                    list_issue(pID,queueID)
 
 
-def list_projects()
+def list_projects():
    url_project="https://ust-test.atlassian.net/rest/servicedeskapi/servicedesk/"
    res=requests.get(url_project, headers=headers)
    d=res.json()
@@ -65,6 +84,6 @@ def list_projects()
 
 
 
-get_jira_issue_key
+git_log
 #list_projects()
 
