@@ -26,7 +26,6 @@ def get_issue_key(stdout):
     l=[]
     l=stdout.split('  ')
     iss_k=l[-1].split(':')[0]
-    print(iss_k)
     list_issue(iss_k)
 
 
@@ -37,10 +36,10 @@ def list_issue(issueKey):
     ddd=res_is.json()
     for m in ddd:
         if m == 'values':
-            for k in dd[m]:
+            for k in ddd[m]:
                 print(k)
 
-def list_issue(pID):
+def list_issue2(pID):
     url_issue="https://ust-test.atlassian.net/rest/servicedeskapi/servicedesk/" + pID + "/queue/" + qID + "issue"
     res_is=requests.get(url_issue, headers=headers)
     ddd={}
@@ -61,7 +60,7 @@ def list_queue_components(pID):
             for k in dd[m]:
                 if 'All open tickets' == k['name']:
                    queueID = k['id']
-                   list_issue(pID,queueID)
+                   list_issue2(pID,queueID)
 
 
 def list_projects():
@@ -84,6 +83,6 @@ def list_projects():
 
 
 
-git_log
+git_log()
 #list_projects()
 
