@@ -17,7 +17,7 @@ def get_jira_issue_key():
                      stdout=subprocess.PIPE,
                      stderr=subprocess.PIPE)
     stdout, stderr = process.communicate()
-    print(stdout)
+    
 
 
 
