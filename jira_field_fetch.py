@@ -71,16 +71,26 @@ def write_tag_to_file(tkey,tvalue):
     file.write(tkey + "=" + tvalue + "\n")
     file.close()
 
-def list_issue2(pID):
-    url_issue="https://ust-test.atlassian.net/rest/servicedeskapi/servicedesk/" + pID + "/queue/" + qID + "issue"
+def list_issue2(pID,qID):
+    url_issue="https://ust-test.atlassian.net/rest/servicedeskapi/servicedesk/" + pID + "/queue/" + qID + "/issue"
     res_is=requests.get(url_issue, headers=headers)
     ddd={}
     ddd=res_is.json()
     for m in ddd:
         if m == 'values':
-            for k in dd[m]:
-                if 'All open tickets' == k['name']:
-                   queueID = k['id']
+            for k in ddd[m]:
+                for z in k:
+                    if z == 'fields':
+                        if k[z]['reporter'] != None:
+                          print k[z]['reporter']['emailAddress']
+                        print k[z]['assignee']
+                        print k[z]['summary']
+                    else:
+                        print k[z]
+                        
+                print("\n")
+
+                   
 
 def list_queue_components(pID):
     url_queue="https://ust-test.atlassian.net/rest/servicedeskapi/servicedesk/" + pID + "/queue"
@@ -115,6 +125,6 @@ def list_projects():
 
 
 
-git_log()
-#list_projects()
+#git_log()
+list_projects()
 
