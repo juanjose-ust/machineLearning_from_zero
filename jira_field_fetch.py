@@ -3,6 +3,11 @@ import sys
 import subprocess
 import time
 
+from decimal import Decimal
+import json
+import boto3
+
+
 headers={'content-type': 'application/json', 'Authorization': 'Basic cmFodWw4Ni4wOEBnbWFpbC5jb206TnNMdXpTVXZtNlk1QnlCTWlnZjk4QjZE'}
 arg1=sys.argv[1]
 projectID=""
@@ -127,9 +132,34 @@ def list_projects():
 
 
 
+##############################
+## DynamoDB upload ###########
+##############################
+
+def load_data(data, dynamodb=None):
+    if not dynamodb:
+        dynamodb = boto3.resource('dynamodb', endpoint_url="https://dynamodb.us-east-2.amazonaws.com")
+
+    table = dynamodb.Table('finops-tab')
+    for d in data:
+        issueid = int(d['id'])
+        issuekey = d['key']
+        issuetitle = d['description']
+        reporter = d['reporter']
+        assignee = d['assignee']
+        print("Adding item:", issueid, issuekey, title, reporter, assignee)
+        table.put_item(Item=data)
+
+
+if __name__ == '__main__':
+
+    list_projects()
+    with open("tickettooldata.json") as json_file:
+        data_list = json.load(json_file, parse_float=Decimal)
+    load_data(data_list)
 
 
 
 #git_log()
-list_projects()
+#list_projects()
 
