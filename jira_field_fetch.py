@@ -18,7 +18,8 @@ ddd={}
 
 
 def create_temp_tag_file():
-    filename="tag_file_" + time.strftime("%Y%m%d-%H%M%S")
+    filename="ticketdata.json"
+    #"tag_file_" + time.strftime("%Y%m%d-%H%M%S")
     return filename
 
 
@@ -73,7 +74,7 @@ def list_issue(issueKey):
 
 def write_tag_to_file(tkey,tvalue):
     file=open(create_temp_tag_file(), 'a')
-    file.write(tkey + "=" + tvalue + "\n")
+    file.write(tkey + ":" + tvalue + "\n")
     file.close()
 
 def list_issue2(pID,qID):
@@ -81,26 +82,42 @@ def list_issue2(pID,qID):
     res_is=requests.get(url_issue, headers=headers)
     ddd={}
     ddd=res_is.json()
+    mm={}
+    mmm=[]
     for m in ddd:
         if m == 'values':
             for k in ddd[m]:
                 for z in k:
                     if z == 'fields':
                         if k[z]['reporter'] != None:
-                            print "reporter: " + str(k[z]['reporter']['emailAddress'])
+                            #write_tag_to_file("reporter",str(k[z]['reporter']['emailAddress']))
+                             mm.update({'reporter': k[z]['reporter']['emailAddress']})
+                            #print "reporter: " + str(k[z]['reporter']['emailAddress'])
+                          
+                        if k[z]['assignee'] != None:
+                                # write_tag_to_file("assignee",str(k[z]['assignee']['emailAddress']))
+                                 mm.update({'assignee': k[z]['assignee']['emailAddress']})
+                                 #print "assignee: " + str(k[z]['assignee']['emailAddress'])
                             
-                            if k[z]['assignee'] != None:
-                                 print "assignee: " + str(k[z]['assignee']['emailAddress'])
-                            
-                            print "description: " + str(k[z]['summary'])
+                        #write_tag_to_file("summary",str(k[z]['summary']))     
+                        mm.update({'summary': k[z]['summary']})      
+                            #print "description: " + str(k[z]['summary'])
                     elif z == "self":
                         continue
                     else:
-                        print z + ": " + str(k[z])
-                        
-                print("\n")
+                        mm.update({z : k[z]})
+                        #write_tag_to_file(z,k[z])
+                        #print z + ": " + str(k[z])
+                #prepare_load()
+                #json_object = json.dumps(mm, indent = 4)
+                #print(json_object)
+                with open("jsondata.json", "w") as outfile:
+                    json.dump(mm, outfile)
+                with open("jsondata.json") as json_file:
+                    data_list = json.load(json_file, parse_float=Decimal)
+                    load_data(data_list)
+                    #print(data_list)
 
-                   
 
 def list_queue_components(pID):
     url_queue="https://ust-test.atlassian.net/rest/servicedeskapi/servicedesk/" + pID + "/queue"
@@ -138,25 +155,29 @@ def list_projects():
 
 def load_data(data, dynamodb=None):
     if not dynamodb:
-        dynamodb = boto3.resource('dynamodb', endpoint_url="https://dynamodb.us-east-2.amazonaws.com")
+        dynamodb = boto3.resource('dynamodb', endpoint_url="https://dynamodb.us-east-2.amazonaws.com", region_name="us-east-2")
 
-    table = dynamodb.Table('finops-tab')
-    for d in data:
-        issueid = int(d['id'])
-        issuekey = d['key']
-        issuetitle = d['description']
-        reporter = d['reporter']
-        assignee = d['assignee']
-        print("Adding item:", issueid, issuekey, title, reporter, assignee)
-        table.put_item(Item=data)
+    table = dynamodb.Table('finops-tag')
+    #for d in data:
+     #   issueid = d['id']
+      #  issuekey = d['key']
+       # issuetitle = d['summary']
+        #reporter = d['reporter']
+        #assignee = d['assignee']
+        #print("Adding item:", issueid, issuekey, title, reporter, assignee)
+    table.put_item(Item=data)
+
+
+#def prepare_load():
+    # json_object = json.dumps(dictionary, indent = 4) 
+    # print(json_object)
+
+
 
 
 if __name__ == '__main__':
-
     list_projects()
-    with open("tickettooldata.json") as json_file:
-        data_list = json.load(json_file, parse_float=Decimal)
-    load_data(data_list)
+   
 
 
 
