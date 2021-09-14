@@ -116,7 +116,7 @@ def list_issue2(pID,qID):
                 with open("jsondata.json") as json_file:
                     data_list = json.load(json_file, parse_float=Decimal)
                     load_data(data_list)
-                    #print(data_list)
+                    print(data_list)
 
 
 def list_queue_components(pID):
