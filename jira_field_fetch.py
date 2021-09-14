@@ -82,11 +82,16 @@ def list_issue2(pID,qID):
                 for z in k:
                     if z == 'fields':
                         if k[z]['reporter'] != None:
-                          print k[z]['reporter']['emailAddress']
-                        print k[z]['assignee']
-                        print k[z]['summary']
+                            print "reporter: " + str(k[z]['reporter']['emailAddress'])
+                            
+                            if k[z]['assignee'] != None:
+                                 print "assignee: " + str(k[z]['assignee']['emailAddress'])
+                            
+                            print "description: " + str(k[z]['summary'])
+                    elif z == "self":
+                        continue
                     else:
-                        print k[z]
+                        print z + ": " + str(k[z])
                         
                 print("\n")
 
