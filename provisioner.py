@@ -116,7 +116,7 @@ def list_issue2(pID,qID):
                 with open("jsondata.json") as json_file:
                     data_list = json.load(json_file, parse_float=Decimal)
                     load_data(data_list)
-                    print(data_list)
+                    #print(data_list)
 
 
 def list_queue_components(pID):
@@ -157,14 +157,15 @@ def load_data(data, dynamodb=None):
     if not dynamodb:
         dynamodb = boto3.resource('dynamodb', endpoint_url="https://dynamodb.us-east-2.amazonaws.com", region_name="us-east-2")
 
-    table = dynamodb.Table('finops-tag')
+    table = dynamodb.Table('finops')
     #for d in data:
-     #   issueid = d['id']
+     #   issueid = int(d['id'])
       #  issuekey = d['key']
        # issuetitle = d['summary']
         #reporter = d['reporter']
         #assignee = d['assignee']
-        #print("Adding item:", issueid, issuekey, title, reporter, assignee)
+        #print("Adding item:", issueid, issuekey, issuetitle, reporter, assignee)
+    print(data)
     table.put_item(Item=data)
 
 
