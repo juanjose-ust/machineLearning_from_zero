@@ -1,0 +1,34 @@
+{
+    "Parameters": {
+        "KeyName": {
+            "Type": "AWS::EC2::KeyPair::KeyName",
+            "ConstraintDescription": "must be the name of an existing EC2 KeyPair.",
+            "Description": "Name of an existing EC2 KeyPair"
+        },
+        "SourceCidrForRDP": {
+            "AllowedPattern": "^([0-9]+\\.){3}[0-9]+\\/[0-9]+$",
+            "MinLength": "9",
+            "Type": "String",
+            "Description": "IP Cidr from which you are likely to RDP into the instances. You can add rules later by modifying the created security groups e.g. 54.32.98.160/32",
+            "MaxLength": "18"
+        },
+    "Resources": {
+        "SharePointFoundation": {
+            "Type": "AWS::EC2::Instance",
+            "Properties": {
+                "KeyName": {
+                    "Ref": "KeyName"
+                },
+                "SecurityGroups": [
+                    {
+                        "Ref": "SharePointFoundationSecurityGroup"
+                    }
+                ],
+                "InstanceType": {
+                    "Ref": "InstanceType"
+                }
+                }
+            }
+        }
+    }
+}
