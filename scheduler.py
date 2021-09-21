@@ -57,7 +57,6 @@ def list_issue2(pID,qID):
                         continue
                     elif z == "key":
                         print(k[z])
-                        print("\n")
                         mm.update({z : k[z]})
                     else:
                         mm.update({z : k[z]})
