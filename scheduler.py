@@ -14,7 +14,8 @@ warnings.filterwarnings("ignore")
 
 tt_url="https://ust-test.atlassian.net/rest/servicedeskapi/servicedesk/"
 headers={'content-type': 'application/json', 'Authorization': 'Basic cmFodWw4Ni4wOEBnbWFpbC5jb206TnNMdXpTVXZtNlk1QnlCTWlnZjk4QjZE'}
-#arg1=sys.argv[1]
+endpoint_url="https://dynamodb.us-east-2.amazonaws.com"
+table_name="finops"
 projectID=""
 queueID=""
 d={}
@@ -100,7 +101,9 @@ def load_data(data, dynamodb=None):
     if not dynamodb:
         dynamodb = boto3.resource('dynamodb', endpoint_url="https://dynamodb.us-east-2.amazonaws.com", region_name="us-east-2")
 
-    table = dynamodb.Table('finops')
+    table = dynamodb.Table(table_name)
+    print("Database Endpoint - " + endpoint_url)
+    print("Table Name - " + table_name)
     print("Adding entry to database")
     print( data)
     table.put_item(Item=data)
