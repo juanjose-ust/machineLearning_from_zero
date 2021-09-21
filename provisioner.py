@@ -81,7 +81,7 @@ def start():
    elif choice == 3:
       print('Currently doesnt support. Back to main menu\n')
       start()
-   elif choice == 3:
+   elif choice == 4:
       print('Currently doesnt support. Back to main menu\n')
       start()
    else:
