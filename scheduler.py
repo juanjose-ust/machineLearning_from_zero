@@ -7,9 +7,14 @@ from decimal import Decimal
 import json
 import boto3
 
+## Supress Python Boto known Warning
+import warnings
+warnings.filterwarnings("ignore")
 
+
+tt_url="https://ust-test.atlassian.net/rest/servicedeskapi/servicedesk/"
 headers={'content-type': 'application/json', 'Authorization': 'Basic cmFodWw4Ni4wOEBnbWFpbC5jb206TnNMdXpTVXZtNlk1QnlCTWlnZjk4QjZE'}
-arg1=sys.argv[1]
+#arg1=sys.argv[1]
 projectID=""
 queueID=""
 d={}
@@ -28,7 +33,7 @@ def write_tag_to_file(tkey,tvalue):
     file.close()
 
 def list_issue2(pID,qID):
-    url_issue="https://ust-test.atlassian.net/rest/servicedeskapi/servicedesk/" + pID + "/queue/" + qID + "/issue"
+    url_issue=tt_url + pID + "/queue/" + qID + "/issue"
     res_is=requests.get(url_issue, headers=headers)
     ddd={}
     ddd=res_is.json()
@@ -36,6 +41,7 @@ def list_issue2(pID,qID):
     mmm=[]
     for m in ddd:
         if m == 'values':
+            print("\nFound Tickets:")
             for k in ddd[m]:
                 for z in k:
                     if z == 'fields':
@@ -48,6 +54,10 @@ def list_issue2(pID,qID):
                         mm.update({'summary': k[z]['summary']})      
                     elif z == "self":
                         continue
+                    elif z == "key":
+                        print(k[z])
+                        print("\n")
+                        mm.update({z : k[z]})
                     else:
                         mm.update({z : k[z]})
                 with open("jsondata.json", "w") as outfile:
@@ -58,7 +68,7 @@ def list_issue2(pID,qID):
 
 
 def list_queue_components(pID):
-    url_queue="https://ust-test.atlassian.net/rest/servicedeskapi/servicedesk/" + pID + "/queue"
+    url_queue=tt_url + pID + "/queue"
     res_q=requests.get(url_queue, headers=headers)
     dd={}
     dd=res_q.json()
@@ -71,8 +81,9 @@ def list_queue_components(pID):
 
 
 def list_projects():
-   url_project="https://ust-test.atlassian.net/rest/servicedeskapi/servicedesk/"
-   res=requests.get(url_project, headers=headers)
+   print("\nTicketing Tool URL - " + tt_url)
+   arg1=raw_input("Enter the Project Name\n")
+   res=requests.get(tt_url, headers=headers)
    d=res.json()
    for i in d:
        if i == 'values':
@@ -80,6 +91,9 @@ def list_projects():
                 if arg1 == j['projectName']:
                    projectID = j['id']
                    list_queue_components(projectID)
+                #else:
+                 #  print("Error - project not found. Exiting programe\n")
+                  # sys.exit(1)
 
 
 def load_data(data, dynamodb=None):
@@ -87,12 +101,15 @@ def load_data(data, dynamodb=None):
         dynamodb = boto3.resource('dynamodb', endpoint_url="https://dynamodb.us-east-2.amazonaws.com", region_name="us-east-2")
 
     table = dynamodb.Table('finops')
-    print(data)
+    print("Adding entry to database")
+    print( data)
     table.put_item(Item=data)
 
 
 
+
 if __name__ == '__main__':
+    
     list_projects()
    
 
