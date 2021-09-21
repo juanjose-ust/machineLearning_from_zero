@@ -48,12 +48,13 @@ def make_kv_from_args(tags):
 
 
 def cf_create_stack(tags):
+   value = raw_input("Enter template location\n")
    # file must in the same dir as script
-   template_file_location = 'terraform-aws-ec2-instance-cf.yaml'
+   #template_file_location = 'terraform-aws-ec2-instance-cf.yaml'
    stack_name = 'finops-rahul'
 
    # read entire file as yaml
-   with open(template_file_location, 'r') as content_file:
+   with open(value, 'r') as content_file:
        content = yaml.load(content_file)
 
    # convert yaml to json string
@@ -61,16 +62,36 @@ def cf_create_stack(tags):
    cloud_formation_client = boto3.client('cloudformation')
    region="us-east-2"
 
-   print("Creating {}".format(stack_name))
+   print("Creating CloudFormation Stack with name - {}".format(stack_name))
    response = cloud_formation_client.create_stack(
        StackName=stack_name,
        TemplateBody=content,
        Tags=make_kv_from_args(tags)
    )
 
+def start():
+   choice = raw_input("Enter 1 for CloudFormation.\nEnter 2 for Azure ARM.\nEnter 3 for Terraform\nEnter 4 for GCP:\n ")
+   choice = int(choice)
+
+   if choice == 1:
+      get_items()
+   elif choice == 2:
+      print('Currently doesnt support. Back to main menu\n')
+      start()
+   elif choice == 3:
+      print('Currently doesnt support. Back to main menu\n')
+      start()
+   elif choice == 3:
+      print('Currently doesnt support. Back to main menu\n')
+      start()
+   else:
+      print("Wrong Choice, back to main menu\n")
+      start()
+
 
 if __name__ == '__main__':
-   get_items()
+
+   start() 
    #cf_create_stack()
   #with open("terraform-aws-ec2-instance-cf.json") as f:
    # data = json.load(f)
