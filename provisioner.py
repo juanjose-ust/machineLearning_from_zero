@@ -25,16 +25,11 @@ def get_items(dynamodb=None):
    table = dynamodb.Table('finops')
    response = table.scan()
    items = response['Items']
-   # Prints Items line by line
-   #for i, j in enumerate(items):
-     #print(j['assignee'])
-   cf_create_stack(items[0])
-   #make_kv_from_args(items[0])
-
+   #cf_create_stack(items[0])
+   return items[0]
 
 from urlparse import urlparse, parse_qs
 def make_kv_from_args(tags):
-    #nvs = parse_qs(tags)
     kv_pairs = []
     for key in tags:
         kv = {
@@ -43,15 +38,12 @@ def make_kv_from_args(tags):
         }
 
         kv_pairs.append(kv)
-    #print(kv_pairs)
     return kv_pairs
 
 
-def cf_create_stack(tags):
+def cf_create_stack():
    value = raw_input("Enter template location\n")
-   # file must in the same dir as script
-   #template_file_location = 'terraform-aws-ec2-instance-cf.yaml'
-   stack_name = 'finops-rahul'
+   stack_name = raw_input("Enter STACK Name\n")
 
    # read entire file as yaml
    with open(value, 'r') as content_file:
@@ -62,6 +54,7 @@ def cf_create_stack(tags):
    cloud_formation_client = boto3.client('cloudformation')
    region="us-east-2"
 
+   tags=get_items()
    print("Creating CloudFormation Stack with name - {}".format(stack_name))
    response = cloud_formation_client.create_stack(
        StackName=stack_name,
@@ -69,12 +62,48 @@ def cf_create_stack(tags):
        Tags=make_kv_from_args(tags)
    )
 
+
+def cf_update_stack():
+   
+   value1=raw_input("Enter file location containing STACK Names\n")
+   value = raw_input("Enter template location\n")
+
+   # read entire file as yaml
+   with open(value1, 'r') as content_file:
+       content = yaml.load(content_file)
+
+   # convert yaml to json string
+   content = json.dumps(content)
+
+   file=open(value1, 'r')
+   lines=file.readlines()
+
+   client = boto3.client('cloudformation')
+   tags=get_items()
+
+   if lines:
+        for stack_name in lines:
+           print("Updating CloudFormation Stack - {}".format(stack_name))
+           response = client.update_stack(
+           StackName=stack_name.strip(),
+           TemplateBody=content,
+           Tags=make_kv_from_args(tags)
+        )
+           #for resource in response['StackResources']:
+            #  print resource['PhysicalResourceId']
+
+
 def start():
    choice = raw_input("Enter 1 for CloudFormation.\nEnter 2 for Azure ARM.\nEnter 3 for Terraform\nEnter 4 for GCP:\n ")
    choice = int(choice)
 
    if choice == 1:
-      get_items()
+      choice_cf = raw_input("Enter 'a' for New Stack.\nEnter 'b' for existig Stack.\n")
+      choice_cf = str(choice_cf)
+      if choice_cf == 'a':
+           cf_create_stack()
+      elif choice_cf == 'b': 
+           cf_update_stack()
    elif choice == 2:
       print('Currently doesnt support. Back to main menu\n')
       start()
@@ -92,11 +121,6 @@ def start():
 if __name__ == '__main__':
 
    start() 
-   #cf_create_stack()
-  #with open("terraform-aws-ec2-instance-cf.json") as f:
-   # data = json.load(f)
-    #data["tags"] = '{ env: production, application: java }'
-    #json.dump(data, open("terraform-aws-ec2-instance-cf.json", "w"), indent = 4)
 
 
 
