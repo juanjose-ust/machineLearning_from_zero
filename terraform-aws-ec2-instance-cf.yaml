@@ -80,9 +80,6 @@ Mappings:
 Resources:
   WebServer:
     Type: AWS::EC2::Instance
-    CreationPolicy:
-      ResourceSignal:
-        Timeout: PT15M
     Properties:
       ImageId: ami-00dfe2c7ce89a450b 
       InstanceType:
@@ -91,13 +88,6 @@ Resources:
         Ref: KeyName
       SecurityGroups:
       - Ref: WebServerSecurityGroup
-      UserData:
-        Fn::Base64: |
-           #!/bin/bash -xe
-           yum update -y
-           yum update -y aws-cfn-bootstrap
-           /opt/aws/bin/cfn-init -v --stack ${AWS::StackId} --resource WebServer --region ${AWS::Region}
-           /opt/aws/bin/cfn-signal -e $? --stack ${AWS::StackId} --resource WebServer --region ${AWS::Region}
   WebServerSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:

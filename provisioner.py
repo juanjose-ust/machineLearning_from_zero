@@ -69,7 +69,7 @@ def cf_update_stack():
    value = raw_input("Enter template location\n")
 
    # read entire file as yaml
-   with open(value1, 'r') as content_file:
+   with open(value, 'r') as content_file:
        content = yaml.load(content_file)
 
    # convert yaml to json string
