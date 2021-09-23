@@ -43,7 +43,7 @@ def make_kv_from_args(tags):
 
 def cf_create_stack():
    value = raw_input("Enter template location\n")
-   stack_name = raw_input("Enter STACK Name\n")
+   stack_name = raw_input("i\nEnter STACK Name\n")
 
    # read entire file as yaml
    with open(value, 'r') as content_file:
@@ -83,7 +83,7 @@ def cf_update_stack():
 
    if lines:
         for stack_name in lines:
-           print("Updating CloudFormation Stack - {}".format(stack_name))
+           print("\nUpdating CloudFormation Stack - {}".format(stack_name))
            response = client.update_stack(
            StackName=stack_name.strip(),
            TemplateBody=content,

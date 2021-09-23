@@ -33,7 +33,7 @@ def write_tag_to_file(tkey,tvalue):
     file.write(tkey + ":" + tvalue + "\n")
     file.close()
 
-def list_issue2(pID,qID):
+def list_issue2(pID,qID,arg1):
     url_issue=tt_url + pID + "/queue/" + qID + "/issue"
     res_is=requests.get(url_issue, headers=headers)
     ddd={}
@@ -60,6 +60,7 @@ def list_issue2(pID,qID):
                         mm.update({z : k[z]})
                     else:
                         mm.update({z : k[z]})
+                mm.update({'projectName' : arg1})    
                 with open("jsondata.json", "w") as outfile:
                     json.dump(mm, outfile)
                 with open("jsondata.json") as json_file:
@@ -67,7 +68,7 @@ def list_issue2(pID,qID):
                     load_data(data_list)
 
 
-def list_queue_components(pID):
+def list_queue_components(pID,arg1):
     url_queue=tt_url + pID + "/queue"
     res_q=requests.get(url_queue, headers=headers)
     dd={}
@@ -77,7 +78,7 @@ def list_queue_components(pID):
             for k in dd[m]:
                 if 'All open tickets' == k['name']:
                    queueID = k['id']
-                   list_issue2(pID,queueID)
+                   list_issue2(pID,queueID,arg1)
 
 
 def list_projects():
@@ -90,7 +91,7 @@ def list_projects():
             for j in d[i]:
                 if arg1 == j['projectName']:
                    projectID = j['id']
-                   list_queue_components(projectID)
+                   list_queue_components(projectID,arg1)
                 #else:
                  #  print("Error - project not found. Exiting programe\n")
                   # sys.exit(1)
