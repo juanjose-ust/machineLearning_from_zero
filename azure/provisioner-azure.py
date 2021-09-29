@@ -44,8 +44,104 @@ def deploy():
            # parameters = json.load(parameter_file_fd)
         
         #print(parameters)
-        deployment_properties = DeploymentProperties(mode=DeploymentMode.incremental, template=template, parameters_link='file:///root/machineLearning_from_zero/azure/parameters/parameter.json')
-        
+        #deployment_properties = DeploymentProperties(mode=DeploymentMode.incremental, template=template, parameters_link="https://github.com/rahul9999/machineLearning_from_zero/blob/master/azure/parameters/parameter.json")
+         
+
+        parameters = {
+        "location": {
+            "value": "eastus"
+        },
+        "networkInterfaceName": {
+            "value": "rahul-test-machine537-test"
+        },
+        "enableAcceleratedNetworking": {
+            "value": "true"
+        },
+        "networkSecurityGroupName": {
+            "value": "rahul-test-machine-nsg-test"
+        },
+        "networkSecurityGroupRules": {
+            "value": [
+                {
+                    "name": "SSH",
+                    "properties": {
+                        "priority": 300,
+                        "protocol": "TCP",
+                        "access": "Allow",
+                        "direction": "Inbound",
+                        "sourceAddressPrefix": "*",
+                        "sourcePortRange": "*",
+                        "destinationAddressPrefix": "*",
+                        "destinationPortRange": "22"
+                    }
+                }
+            ]
+        },
+        "subnetName": {
+            "value": "default"
+        },
+        "virtualNetworkName": {
+            "value": "Test1-vnet"
+        },
+        "addressPrefixes": {
+            "value": [
+                "172.21.0.0/16"
+            ]
+        },
+        "subnets": {
+            "value": [
+                {
+                    "name": "default",
+                    "properties": {
+                        "addressPrefix": "172.21.0.0/24"
+                    }
+                }
+            ]
+        },
+        "publicIpAddressName": {
+            "value": "rahul-test-machine-ip-test"
+        },
+        "publicIpAddressType": {
+            "value": "Static"
+        },
+        "publicIpAddressSku": {
+            "value": "Standard"
+        },
+        "virtualMachineName": {
+            "value": "rahul-test-machine-1-test"
+        },
+        "virtualMachineComputerName": {
+            "value": "rahul-test-machine-1-test"
+        },
+        "virtualMachineRG": {
+            "value": "Test1"
+        },
+        "osDiskType": {
+            "value": "StandardSSD_LRS"
+        },
+        "virtualMachineSize": {
+            "value": "Standard_DS1_v2"
+        },
+        "adminUsername": {
+            "value": "test123"
+        },
+        "adminPassword": {
+            "value": "1A2s3d4f5g6h7j@"
+        },
+        "zone": {
+            "value": "1"
+        },
+                "resourceTags": {
+            "value": {
+            "Environment": "Dev",
+            "Project": "Tutorial"
+        }
+     }
+    }
+       # parameters = {k: {'value': v} for k, v in parameters.items()}
+
+
+        deployment_properties = DeploymentProperties(mode=DeploymentMode.incremental, template=template, parameters=parameters)
 
         deployment_async_operation = client.deployments.begin_create_or_update(
             resource_group,

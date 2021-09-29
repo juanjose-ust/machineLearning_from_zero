@@ -9,7 +9,7 @@
 			"type": "string"
 		},
 		"enableAcceleratedNetworking": {
-			"type": "bool"
+			"type": "string"
 		},
 		"networkSecurityGroupName": {
 			"type": "string"
