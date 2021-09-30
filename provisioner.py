@@ -98,10 +98,13 @@ def cf_update_stack():
 
 
 
-def deploy():
-        warnings.filterwarnings("ignore")
-        subscription_id = os.environ.get('AZURE_SUBSCRIPTION_ID', '11111111-1111-1111-1111-111111111111')   # your Azure Subscription Id
-        resource_group = 'Test2'            # the resource group for deployment
+def azure_new_deploy():
+        template_path = raw_input("Enter template location\n")
+        deployment_name = raw_input("\nEnter Deployment Name\n")
+        resourcegroup_name = raw_input("\nEnter Resource-group Name\n")
+        location = raw_input("\nEnter Location/Region\n")
+
+        subscription_id = os.environ.get('AZURE_SUBSCRIPTION_ID', '11111111-1111-1111-1111-111111111111') # your Azure Subscription Id
 
         credentials = ServicePrincipalCredentials(
             client_id=os.environ['AZURE_CLIENT_ID'],
@@ -113,15 +116,14 @@ def deploy():
 
         client = ResourceManagementClient(credential, subscription_id)
 
-
         client.resource_groups.create_or_update(
            resource_group,
             {
-                'location':'eastus'
+                'location': location
             }
          )
 
-        template_path = os.path.join(os.path.dirname(__file__), 'templates', 'template.json')
+        #template_path = os.path.join(os.path.dirname(__file__), 'templates', 'template.json')
         with open(template_path, 'r') as template_file_fd:
             template = json.load(template_file_fd)
         
@@ -140,7 +142,7 @@ def deploy():
                for k in range(0, L):
                   template[i][k]['tags']="[parameters('resourceTags')]"
 
-        print(template)
+        #print(template)
 
 
         parameters = {
@@ -229,14 +231,14 @@ def deploy():
         }
     }
 
-        #deployment_properties = DeploymentProperties(mode=DeploymentMode.incremental, template=template, parameters=parameters)
+        deployment_properties = DeploymentProperties(mode=DeploymentMode.incremental, template=template, parameters=parameters)
 
-        #deployment_async_operation = client.deployments.begin_create_or_update(
-         #   resource_group,
-           # 'rahul-azure-test',
-            #Deployment(properties=deployment_properties)
-        #)
-        #deployment_async_operation.wait()
+        deployment_async_operation = client.deployments.begin_create_or_update(
+            resourcegroup_name,
+            deployment_name,
+            Deployment(properties=deployment_properties)
+        )
+        deployment_async_operation.wait()
 
 
 def start():
@@ -273,6 +275,8 @@ def start():
       start()
 
 
+
+## Starting point
 if __name__ == '__main__':
 
    start()
