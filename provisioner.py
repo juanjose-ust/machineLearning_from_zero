@@ -122,27 +122,25 @@ def azure_new_deploy():
                 'location': location
             }
          )
-
-        #template_path = os.path.join(os.path.dirname(__file__), 'templates', 'template.json')
+        
+        print("\nFetching metadata...\n")
+        tags=get_items()
+        print("done")
         with open(template_path, 'r') as template_file_fd:
             template = json.load(template_file_fd)
         
-
+        print("\nUpdating template...\n")
         for i in template: 
             if i == 'parameters':
-                template['parameters']['resourceTags']={"type": "object", "defaultValue": { 
-            "Environment": "Dev",
-            "Project": "Tutorial"}
-            }
+                template['parameters']['resourceTags']={"type": "object", "defaultValue":  tags }
 
         for i in template:
             if i == 'resources':
                L=len(template['resources'])
-               #L=L-1
                for k in range(0, L):
                   template[i][k]['tags']="[parameters('resourceTags')]"
 
-        #print(template)
+        print("done")
 
 
         parameters = {
@@ -231,14 +229,18 @@ def azure_new_deploy():
         }
     }
 
+        print("\nInitiating connection with Azure...\n")
+        print("done\n")
         deployment_properties = DeploymentProperties(mode=DeploymentMode.incremental, template=template, parameters=parameters)
 
+        print("\nTriggering Deployment in Azure...\n")
         deployment_async_operation = client.deployments.begin_create_or_update(
             resourcegroup_name,
             deployment_name,
             Deployment(properties=deployment_properties)
         )
         deployment_async_operation.wait()
+        print("done")
 
 
 def start():
