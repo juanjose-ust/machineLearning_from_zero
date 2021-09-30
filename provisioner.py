@@ -117,7 +117,7 @@ def azure_new_deploy():
         client = ResourceManagementClient(credential, subscription_id)
 
         client.resource_groups.create_or_update(
-           resource_group,
+           resourcegroup_name,
             {
                 'location': location
             }
@@ -212,13 +212,13 @@ def azure_new_deploy():
             "value": "rahul-test-machine-1-test"
         },
         "virtualMachineRG": {
-            "value": "Test1"
+            "value": "Test2"
         },
         "osDiskType": {
             "value": "StandardSSD_LRS"
         },
         "virtualMachineSize": {
-            "value": "Standard_DS1_v2"
+            "value": "Standard_D2as_v4"
         },
         "adminUsername": {
             "value": "test123"
