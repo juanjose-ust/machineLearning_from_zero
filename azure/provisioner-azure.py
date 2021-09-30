@@ -12,6 +12,9 @@ import warnings
 
 
 
+
+
+
 def deploy():
         warnings.filterwarnings("ignore")
         subscription_id = os.environ.get('AZURE_SUBSCRIPTION_ID', '11111111-1111-1111-1111-111111111111')   # your Azure Subscription Id
@@ -46,10 +49,6 @@ def deploy():
             "Environment": "Dev",
             "Project": "Tutorial"}
             }
-            #print("\n")
-            #print("\n")
-            #print(template[i])
-        #print(template['parameters'])
 
         for i in template:
             if i == 'resources':
@@ -57,9 +56,9 @@ def deploy():
                #L=L-1
                for k in range(0, L):
                   template[i][k]['tags']="[parameters('resourceTags')]"
-                  print(template[i][k])
-                  print("\n")
-                  print("\n")
+
+        print(template)
+
 
         parameters = {
         "location": {
