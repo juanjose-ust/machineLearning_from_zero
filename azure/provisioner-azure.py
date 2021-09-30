@@ -38,14 +38,28 @@ def deploy():
         template_path = os.path.join(os.path.dirname(__file__), 'templates', 'template.json')
         with open(template_path, 'r') as template_file_fd:
             template = json.load(template_file_fd)
-
-        #parameter_path =  os.path.join(os.path.dirname(__file__), 'parameters', 'parameter.json')
-        #with open(parameter_path, 'r') as parameter_file_fd:
-           # parameters = json.load(parameter_file_fd)
         
-        #print(parameters)
-        #deployment_properties = DeploymentProperties(mode=DeploymentMode.incremental, template=template, parameters_link="https://github.com/rahul9999/machineLearning_from_zero/blob/master/azure/parameters/parameter.json")
-         
+
+        for i in template: 
+            if i == 'parameters':
+                template['parameters']['resourceTags']={"type": "object", "defaultValue": { 
+            "Environment": "Dev",
+            "Project": "Tutorial"}
+            }
+            #print("\n")
+            #print("\n")
+            #print(template[i])
+        #print(template['parameters'])
+
+        for i in template:
+            if i == 'resources':
+               L=len(template['resources'])
+               #L=L-1
+               for k in range(0, L):
+                  template[i][k]['tags']="[parameters('resourceTags')]"
+                  print(template[i][k])
+                  print("\n")
+                  print("\n")
 
         parameters = {
         "location": {
@@ -130,25 +144,17 @@ def deploy():
         },
         "zone": {
             "value": "1"
-        },
-                "resourceTags": {
-            "value": {
-            "Environment": "Dev",
-            "Project": "Tutorial"
         }
-     }
     }
-       # parameters = {k: {'value': v} for k, v in parameters.items()}
 
+        #deployment_properties = DeploymentProperties(mode=DeploymentMode.incremental, template=template, parameters=parameters)
 
-        deployment_properties = DeploymentProperties(mode=DeploymentMode.incremental, template=template, parameters=parameters)
-
-        deployment_async_operation = client.deployments.begin_create_or_update(
-            resource_group,
-            'rahul-azure-test',
-            Deployment(properties=deployment_properties)
-        )
-        deployment_async_operation.wait()
+        #deployment_async_operation = client.deployments.begin_create_or_update(
+         #   resource_group,
+           # 'rahul-azure-test',
+            #Deployment(properties=deployment_properties)
+        #)
+        #deployment_async_operation.wait()
 
 
 

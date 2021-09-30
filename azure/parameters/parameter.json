@@ -84,12 +84,6 @@
         },
         "zone": {
             "value": "1"
-        },
-		"resourceTags": {
-            "value": {
-            "Environment": "Dev",
-            "Project": "Tutorial"
-        }
-       }
+        } 
     }
 }

@@ -61,10 +61,6 @@
 		},
 		"zone": {
 			"type": "string"
-		},
-		"resourceTags": {
-			"type": "object"
-
 		}
 	},
 	"variables": {
@@ -82,7 +78,6 @@
 				"[concat('Microsoft.Network/virtualNetworks/', parameters('virtualNetworkName'))]",
 				"[concat('Microsoft.Network/publicIpAddresses/', parameters('publicIpAddressName'))]"
 			],
-			"tags": "[parameters('resourceTags')]",
 			"properties": {
 				"ipConfigurations": [{
 					"name": "ipconfig1",
@@ -107,7 +102,6 @@
 			"type": "Microsoft.Network/networkSecurityGroups",
 			"apiVersion": "2019-02-01",
 			"location": "[parameters('location')]",
-			"tags": "[parameters('resourceTags')]",
 			"properties": {
 				"securityRules": "[parameters('networkSecurityGroupRules')]"
 			}
@@ -117,7 +111,6 @@
 			"type": "Microsoft.Network/virtualNetworks",
 			"apiVersion": "2020-11-01",
 			"location": "[parameters('location')]",
-			"tags": "[parameters('resourceTags')]",
 			"properties": {
 				"addressSpace": {
 					"addressPrefixes": "[parameters('addressPrefixes')]"
@@ -130,7 +123,6 @@
 			"type": "Microsoft.Network/publicIpAddresses",
 			"apiVersion": "2019-02-01",
 			"location": "[parameters('location')]",
-			"tags": "[parameters('resourceTags')]",
 			"properties": {
 				"publicIpAllocationMethod": "[parameters('publicIpAddressType')]"
 			},
@@ -146,7 +138,6 @@
 			"type": "Microsoft.Compute/virtualMachines",
 			"apiVersion": "2021-03-01",
 			"location": "[parameters('location')]",
-			"tags": "[parameters('resourceTags')]",
 			"dependsOn": [
 				"[concat('Microsoft.Network/networkInterfaces/', parameters('networkInterfaceName'))]"
 			],
