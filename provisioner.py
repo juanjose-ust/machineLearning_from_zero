@@ -236,15 +236,15 @@ def azure_new_deploy():
 
         print("\nInitiating connection with Azure...\n")
         print("done\n")
-        #deployment_properties = DeploymentProperties(mode=DeploymentMode.incremental, template=template, parameters=parameters)
+        deployment_properties = DeploymentProperties(mode=DeploymentMode.incremental, template=template, parameters=parameters)
 
         print("\nTriggering Deployment in Azure...\n")
-        #deployment_async_operation = client.deployments.begin_create_or_update(
-           # resourcegroup_name,
-           # deployment_name,
-           # Deployment(properties=deployment_properties)
-        #)
-        #deployment_async_operation.wait()
+        deployment_async_operation = client.deployments.begin_create_or_update(
+            resourcegroup_name,
+            deployment_name,
+            Deployment(properties=deployment_properties)
+        )
+        deployment_async_operation.wait()
         print("done")
 
 
