@@ -1,0 +1,7 @@
+Found Tickets:
+ITSAMPLE-32
+Database Endpoint - https://dynamodb.us-east-2.amazonaws.com
+Table Name - finops
+Adding entry to database
+{u'reporter': u'song@atlassian-demo.invalid', u'projectName': u'ITSM sample space', u'summary': u'Test ticket', u'assignee': u'rahul86.08@gmail.com', u'key': u'ITSAMPLE-32', u'id': u'10031'}
+
