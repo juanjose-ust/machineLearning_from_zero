@@ -1,4 +1,6 @@
+from pathlib import Path
 import boto3
+import sys
 import json
 import yaml
 import os
@@ -31,30 +33,64 @@ def create_instance():
   tags=get_items()
   print("done")
   print("\n(Metadata) =")
+
+  orig_stdout = sys.stdout
+  f = open('out.txt', 'w')
+  sys.stdout = f
+
   for i in tags:
       print(i + ": " + tags[i])
+      
+  sys.stdout = orig_stdout
+  f.close()
+ 
+  with open('out.txt', 'r') as file:
+    d = file.read()
+    file.close()
+    m = d.split("\n")
+    s = "\n".join(m[:-1])
   
+  with open('out.txt', 'w') as file:
+    for i in range(len(s)):
+      file.write(s[i])
+    file.close()
+
+  data = {'labels': {}}
 # [UPDATING FILE]
-  with open(template_path, 'r') as content_file:
-       template = json.load(content_file)
-# 
-#  print("\n\nUpdating template...\n")
-#  with open(template_path,'r+') as file:
-#    file_data = json.load(file)
-#    file_data["labels"].append(new_data)
-#    file.seek(0)
-#    json.dump(file_data, file, indent = 4)
-#  
-#  addlabels = { tags }
-#  write_json(addlabels)
-  
+  with open('template.yaml', 'r') as file:
+    data2 = file.read()
+    substring = 'properties'
+    count = data2.count(substring)
+  check = 0
+  while check < count: 
+    with open(template_path, 'r') as yamlfile:
+         cur_yaml = yaml.safe_load(yamlfile)
+         cur_yaml['resources'][check]['properties'].update(data)
+         d = {}
+         f = open('out.txt', 'r')
+         for line in f.readlines():
+             key,value = line.split(":")
+             key = key.replace('@','-')
+             value = value.replace('@','-')
+             key = key.replace('.','-')
+             value = value.replace('\n','')
+             value = value.replace('.','-')
+             value = value.replace(' ','')
+             d[key.lower()] = value.lower()
+         cur_yaml['resources'][check]['properties']['labels'].update(d)
+         check += 1
 
-  config = template
+    if cur_yaml:
+         with open(template_path,'w') as yamlfile:
+           yaml.safe_dump(cur_yaml, yamlfile) # Also note the safe_dump 
 
-  return compute.instances().insert(
-        project=project,
-        zone=zone,
-        body=config).execute()
+    print(cur_yaml)
+    config = cur_yaml
+
+#  return compute.instances().insert(
+#        project=project,
+#        zone=zone,
+#        body=config).execute()
 
 # [START list_instances]
 def list_instances():
@@ -71,7 +107,9 @@ if __name__ == '__main__':
         scopes=['https://www.googleapis.com/auth/cloud-platform'])
     compute = googleapiclient.discovery.build('compute', 'v1', credentials=credentials)
     create_instance()
-    instances = list_instances()
+#    instances = list_instances()
     print('Instances in project %s and zone %s:' % (project, zone))
     for instance in instances:
         print(' - ' + instance['name'])
+    text = Path("out.txt").read_text()
+    print(text)
